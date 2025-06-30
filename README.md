@@ -46,8 +46,8 @@ The datasets of this work are in /datasets folder.
 ### Code
 We release the code containing Study 1, 2, 3 and side study prompting procedures in `code.ipynb`.
 
-### 14 Published Papers for Formulating the Mistake Framework
-We release references to the 14 published papers in the `references.pdf` file.
+### 14 Published Papers for Formulating the Mistake Framework and 28 Mistake Criteria:
+We release references to the 14 published papers in the `references.pdf` file. The file also includes the list of 28 interview mistake criteria found in the listed papers but not mentioned in the paper. 
 
 
 ## System Requirements
