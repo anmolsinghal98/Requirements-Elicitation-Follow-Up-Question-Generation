@@ -20,9 +20,9 @@ This tool was developed to help developers improve their questioning techniques 
 
 ### Dataset
 
-The datasets of this work are in /datasets folder.
+The datasets used as input for the LLM-based experiments and the surveys are in `datasets` folder.
 
-`study1.csv` - the turn context dataset used in Study 1. Note that some of the data in this file may appear to look like duplicates, but in fact they are just partially the same, which happens because the interviewer's follow-up question depends on a longer previous context that has already been analyzed prior in this dataset. Below is a mock example:
+`study1.csv` - the turn context dataset used as input in Study 1. Note that some of the data in this file may appear to look like duplicates, but in fact they are just partially the same, which happens because the interviewer's follow-up question depends on a longer previous context that has already been analyzed prior in this dataset. Below is a mock example:
 
   Data Row 1:
   Interviewee: OK, I want an apartment that has a large kitchen.
@@ -36,15 +36,30 @@ The datasets of this work are in /datasets folder.
   Follow-up Question: Alright, you mentioned you want a large kitchen, how big should it be?
   No. of relevant speaker turns: 3.
 
+  The columns names in the dataset are as follows:
+  - `Interview Domain`: The directory service domain that the interview focuses on
+  - `Interview Turns`: Succesive speaker turns in an interview required to establish a sufficient context for an interviewer question 
+  - `Human Follow Up Question`: The follow-up question the interviewer asked in the interview following the interview turns
+  - `No. Of Relevant Speaker Turns`: The number of speaker turns in the `Interview Turns` column. 
+  - `Type`: The type of human follow-up question (derived using open-coding)
 
-`study2.csv` - the raw data of 30 interviewee-interviewer pairs used in Study 2, 3 and Side Study.
+`study2.csv` - the raw input data of 30 interviewee-interviewer pairs used in Study 2, 3 and Side Study to generate the LLM Follow-up Questions.
 
-`survey_results.csv` - the 128 instances survey results from Study 3. Since the question orders are shuffled, we added a column 'origin' to trace back the source of Q1 and Q2 during analysis, where 'origin'=0 means Q1 is from LLM, 'origin'=1 means Q1 is from the human analyst. The columns 'A1' indicates results for comparing which question avoids a mistake better, where 'A1'=1 means Q1 is better, 'A1'=2 means Q2 is better. The rest of the columns correspond to the 5-point scale scores for each question with respect to relevancy (A2), clarity (A3), and informativeness (A4). Note that this file contains the same raw data as study2.csv but also includes results from study 3.
+### Output
 
-`side_study.csv` - Side Study dataset (same raw data as study2.csv but with results from GPT-4o generation of follow-up questions, and the re-evaluation results) where the interviewer_response column is replaced with LLM-generated questions that attempt to avoid all mistake types. The re-evaluation results are under each mistake type.
+`study1_out_sample.csv` - This file shows the sample output on 10 input examples from `study1.csv` after running the Study 1 prompt in `code.ipynb`.  
+
+`study2_out_sample.csv` - This file shows the sample output on 10 input examples from `study2.csv` after running the Study 2 prompt in `code.ipynb`.  
+
+`survey2_results.csv` - the 128 instances survey results from Study 3. Since the question orders are shuffled, we added a column 'origin' to trace back the source of Q1 and Q2 during analysis, where 'origin'=0 means Q1 is from LLM, 'origin'=1 means Q1 is from the human analyst. The columns 'A1' indicates results for comparing which question avoids a mistake better, where 'A1'=1 means Q1 is better, 'A1'=2 means Q2 is better. The rest of the columns correspond to the 5-point scale scores for each question with respect to relevancy (A2), clarity (A3), and informativeness (A4). Note that this file contains the same raw data as `study2.csv` but also includes results from study 3.
+
+`side_study.csv` - Side Study dataset (same raw data as `study2.csv` but with results from GPT-4o generation of follow-up questions, and the re-evaluation results) where the interviewer_response column is replaced with LLM-generated questions that attempt to avoid all mistake types. The re-evaluation results are under each mistake type.
 
 ### Code
 We release the code containing Study 1, 2, 3 and side study prompting procedures in `code.ipynb`.
+
+#### Quick Start
+`quick-start.py` is a minimal script that demonstrates how to generate a follow-up question using the Study 1 dataset and GPT-4o. It loads the first row from `datasets/study1.csv`, constructs a prompt based on the interview context, and queries the GPT-4o model to generate a follow-up question. This script is intended for users who want a quick example of how to use the core functionality without running the full notebook. Make sure to set your OpenAI API key in the environment variable `OPENAI_API_KEY` before running the script.
 
 ### 14 Published Papers for Formulating the Mistake Framework and 28 Mistake Criteria:
 We release references to the 14 published papers in the `references.pdf` file. The file also includes the list of 28 interview mistake criteria found in the listed papers but not mentioned in the paper. 
@@ -61,8 +76,12 @@ We release references to the 14 published papers in the `references.pdf` file. T
 - openai
 - python-dotenv
 
-### API Requirements
-- OpenAI API key with access to GPT-4o
+### Optional Python Packages for Running Code on HuggingFace Language Models
+- transformers
+- torch
+
+### OpenAI API Requirements
+- OpenAI API key with access to GPT-4o. Instructions to create an OpenAI API Key can be found here: https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key.
 
 ## Installation Instructions
 
@@ -79,7 +98,7 @@ pip install pandas openai python-dotenv jupyter
 
 3. Set up your OpenAI API key:
    - Create a `.env` file in the project root directory
-   - Add your OpenAI API key to the file:
+   - (OPTIONAL) Add your OpenAI API key to the file:
    ```
    OPENAI_API_KEY=your_api_key_here
    ```
@@ -92,13 +111,8 @@ jupyter notebook code.ipynb
 ## Usage Instructions
 
 1. In the notebook:
-   - Update the `OPEN_AI_KEY` variable with your API key
-   - Ensure your input CSV files are in the correct format with the following columns:
-     - `Interview Domain`
-     - `Interview Turns`
-     - `Interviewee_Speech`
-     - `Interviewer_Response`
-     - `Domain`
+   - Update the `OPEN_AI_KEY` variable with your API key. 
+   - Ensure your input CSV files for each study are in the correct format. The format should follow the files in the `dataset` directory. 
 
 2. Run the cells in sequence to:
    - Generate follow-up questions
@@ -123,6 +137,10 @@ The system generates:
 2. A potential threat to reproducibility is that GPT-4o is a closed-source model by OpenAI. The scores reported in the paper may be subject to minor changes due to repeated updates to the GPT-4o model. Nevertheless, the key findings reported in the paper are likely to remain valid.
 3. In this paper, we also conducted surveys with crowdworkers to compare GPT-generarted questions with human follow-up questions. We ran statistical tests to validate our hypotheses. While it is not possible to reproduce the results of these studies directly, we have described our survey design process in detail in the paper. The `dataset` folder contains the examples used in the survey. 
 
+## Using Language Models Other Than GPT-4o
+
+The prompts provided in `code.ipynb` are model-agnostic, i.e., they can be used with any language model. The notebook provides the code setup to substitute `openai` models with any model hosted on `huggingface`. However, please note that the results reported in the paper using GPT-4o can differ significantly from the results obtained using a different model. The difference in model performance can be attributed to multiple factors that include the number of model parameters, training dataset size and quality, instruction tuning, and other training-specific details. 
+
 
 ## Author Information 
 
@@ -136,7 +154,7 @@ The artifact can be found at: https://doi.org/10.5281/zenodo.15678031
 
 ## How to cite
 
-If you use this work in your research, please cite:
+If you use this work in your research, please cite: 
 
 ### APA
 

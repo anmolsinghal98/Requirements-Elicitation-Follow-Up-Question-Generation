@@ -3,3 +3,5 @@ openai>=1.0.0
 python-dotenv>=1.0.0
 jupyter>=1.0.0
 notebook>=7.0.0 
+transformers>=4.40.0 # not required for the code to run using GPT-4o, but necessary for other HuggingFace models
+torch>=2.0.0 # not required for the code to run using GPT-4o, but necessary for other HuggingFace models
