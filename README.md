@@ -150,7 +150,7 @@ The prompts provided in `code.ipynb` are model-agnostic, i.e., they can be used 
 
 ## Artifact Location
 
-The artifact can be found at: https://doi.org/10.5281/zenodo.15678031
+The artifact can be found at: https://doi.org/10.5281/zenodo.15793870
 
 ## How to cite
 
